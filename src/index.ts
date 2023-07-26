@@ -7,7 +7,7 @@ app.use(express.json())
 
 type RequestWithParams<P> = Request<P, {}, {}, {}>
 type RequestWithBody<B> = Request<{}, {}, B, {}>
-type RequestWithParamsBody<P, B> = Request<P, {}, B, {}>
+//type RequestWithParamsBody<P, B> = Request<P, {}, B, {}>
 
 enum AvailableResolutions {
     P144 = "P144",
