@@ -79,22 +79,23 @@ app.put("/videos/:id", (req: Request, res: Response) => {
 
     const {title, author, availableResolutions, minAgeRestriction, canBeDownloaded, publicationDate} = req.body;
 
+    let errors: ErrorType = {
+        errorsMessages: []
+    }
 
     if (!title || !title.length || title.trim().length > 40) {
-        res.status(400).send({message: "Invalid title", field: "title"});
-        return;
+        errors.errorsMessages.push({message: "Invalid title", field: "title"})
     }
 
     if (!author || !author.length || author.trim().length > 20) {
-        res.status(400).send({message: "Invalid author", field: "author"});
-        return;
+        errors.errorsMessages.push({message: "Invalid author", field: "author"});
     }
     if (minAgeRestriction !== null && (typeof minAgeRestriction !== "number" || minAgeRestriction < 0)) {
-        res.status(400).send({message: "Invalid minAgeRestriction", field: "minAgeRestriction"});
+        errors.errorsMessages.push({message: "Invalid minAgeRestriction", field: "minAgeRestriction"});
         return;
     }
     if (typeof canBeDownloaded !== "boolean") {
-        res.status(400).send({ message: "Invalid canBeDownloaded", field: "canBeDownloaded" });
+        errors.errorsMessages.push({ message: "Invalid canBeDownloaded", field: "canBeDownloaded" });
         return;
     }
     if (publicationDate !==publicationDate) {
