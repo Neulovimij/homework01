@@ -77,42 +77,45 @@ app.put("/videos/:id", (req: Request, res: Response) => {
         return;
     }
 
+
+    let errors: ErrorType = {
+        errorsMessages: []
+    }
     const {title, author, availableResolutions, minAgeRestriction, canBeDownloaded, publicationDate} = req.body;
 
 
 
     if (!title || !title.length || title.trim().length > 40) {
-        res.status(400).send({message: "Invalid title", field: "title"});
-        return;
+        errors.errorsMessages.push({message: "Invalid title", field: "title"});
     }
 
     if (!author || !author.length || author.trim().length > 20) {
-        res.status(400).send({message: "Invalid author", field: "author"});
-        return;
+        errors.errorsMessages.push({message: "Invalid author", field: "author"});
+
     }
     if (minAgeRestriction !== null && (typeof minAgeRestriction !== "number" || minAgeRestriction < 0)) {
-        res.status(400).send({message: "Invalid minAgeRestriction", field: "minAgeRestriction"});
-        return;
+        errors.errorsMessages.push({message: "Invalid minAgeRestriction", field: "minAgeRestriction"});
     }
     if (typeof canBeDownloaded !== "boolean") {
-        res.status(400).send({ message: "Invalid canBeDownloaded", field: "canBeDownloaded" });
-        return;
+        errors.errorsMessages.push({ message: "Invalid canBeDownloaded", field: "canBeDownloaded" });
     }
     if (publicationDate !==publicationDate) {
-        res.status(400).send({ message: "Invalid publicationDate", field: "publicationDate" });
-        return;
+        errors.errorsMessages.push({ message: "Invalid publicationDate", field: "publicationDate" });
+
     }
             if (Array.isArray(availableResolutions)) {
                 if (!availableResolutions.every((r) => Object.values(AvailableResolutions).includes(r))) {
-                    res.status(400).send({message: "Invalid availableResolutions", field: "availableResolutions"});
-                    return;
+                    errors.errorsMessages.push({message: "Invalid availableResolutions", field: "availableResolutions"});
+
                 }
 
             } else {
-                res.status(400).send({message: "Invalid availableResolutions", field: "availableResolutions"});
-                return;
-            }
+                errors.errorsMessages.push({message: "Invalid availableResolutions", field: "availableResolutions"});
 
+            }
+if(errors.errorsMessages.length){
+    return res.status(400).send(errors);
+}
     video.title = title;
     video.author = author;
     video.availableResolutions = availableResolutions;
@@ -120,7 +123,7 @@ app.put("/videos/:id", (req: Request, res: Response) => {
     video.canBeDownloaded = canBeDownloaded;
     video.publicationDate = publicationDate;
 
-    res.sendStatus(204);
+   return res.sendStatus(204);
 });
 
 app.delete("/videos/:id", (req: RequestWithParams<{ id: number }>, res: Response) => {
