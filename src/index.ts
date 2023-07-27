@@ -93,7 +93,7 @@ app.put("/videos/:id", (req: Request, res: Response) => {
         errors.errorsMessages.push({message: "Invalid author", field: "author"});
 
     }
-    if (minAgeRestriction !== null && (typeof minAgeRestriction !== "number" || minAgeRestriction < 0  || minAgeRestriction <= 18)) {
+    if (minAgeRestriction !== null && (typeof minAgeRestriction !== "number" || minAgeRestriction < 0  || minAgeRestriction > 18)) {
         errors.errorsMessages.push({message: "Invalid minAgeRestriction", field: "minAgeRestriction"});
     }
     if (typeof canBeDownloaded !== "boolean") {
