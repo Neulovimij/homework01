@@ -76,7 +76,7 @@ app.put("/videos/:id", (req: Request, res: Response) => {
         return;
     }
 
-    const { title, author, availableResolutions } = req.body;
+    const { title, author, availableResolutions, minAgeRestriction } = req.body;
 
 
     if (!title || !title.length || title.trim().length > 40) {
@@ -94,12 +94,15 @@ app.put("/videos/:id", (req: Request, res: Response) => {
             res.status(400).send({ message: "Invalid availableResolutions", field: "availableResolutions" });
             return;
         }
+        if (minAgeRestriction !== null && (typeof minAgeRestriction !== "number" || minAgeRestriction < 0)) {
+            res.status(400).send({ message: "Invalid minAgeRestriction", field: "minAgeRestriction" });
+            return;
+        }
     } else {
         res.status(400).send({ message: "Invalid availableResolutions", field: "availableResolutions" });
         return;
     }
 
-    // Обновляем данные видео
     video.title = title;
     video.author = author;
     video.availableResolutions = availableResolutions;
@@ -128,10 +131,12 @@ app.delete("/videos/:id", (req: RequestWithParams<{ id: number }>, res: Response
 
 app.delete("/videos", (req: express.Request, res: express.Response) => {
     if (videos.length === 0) {
-        res.status(204).send("No Videos");
+        res.sendStatus(204);
         return;
     }
+    videos.length = 0;
 
+    res.sendStatus(204);
 });
 
 
