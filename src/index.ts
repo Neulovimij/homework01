@@ -99,7 +99,7 @@ app.put("/videos/:id", (req: Request, res: Response) => {
     if (typeof canBeDownloaded !== "boolean") {
         errors.errorsMessages.push({ message: "Invalid canBeDownloaded", field: "canBeDownloaded" });
     }
-    if (publicationDate !==publicationDate) {
+    if (typeof publicationDate !== "string") {
         errors.errorsMessages.push({ message: "Invalid publicationDate", field: "publicationDate" });
 
     }
