@@ -106,8 +106,9 @@ app.put("/videos/:id", (req: Request, res: Response) => {
     video.title = title;
     video.author = author;
     video.availableResolutions = availableResolutions;
+    video.minAgeRestriction = minAgeRestriction;
 
-    res.status(204).send(video);
+    res.sendStatus(204);
 });
 
 app.delete("/videos/:id", (req: RequestWithParams<{ id: number }>, res: Response) => {
