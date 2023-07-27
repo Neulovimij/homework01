@@ -128,13 +128,10 @@ app.delete("/videos/:id", (req: RequestWithParams<{ id: number }>, res: Response
 
 app.delete("/videos", (req: express.Request, res: express.Response) => {
     if (videos.length === 0) {
-        res.status(404).send("No Videos");
+        res.status(204).send("No Videos");
         return;
     }
 
-    videos.length = 0; // Очищаем массив videos
-
-    res.status(204).send("All done!");
 });
 
 
