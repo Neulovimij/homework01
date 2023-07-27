@@ -7,6 +7,7 @@ app.use(express.json())
 
 type RequestWithParams<P> = Request<P, {}, {}, {}>
 type RequestWithBody<B> = Request<{}, {}, B, {}>
+
 //type RequestWithParamsBody<P, B> = Request<P, {}, B, {}>
 
 enum AvailableResolutions {
@@ -76,37 +77,47 @@ app.put("/videos/:id", (req: Request, res: Response) => {
         return;
     }
 
-    const { title, author, availableResolutions, minAgeRestriction } = req.body;
+    const {title, author, availableResolutions, minAgeRestriction, canBeDownloaded, publicationDate} = req.body;
 
 
     if (!title || !title.length || title.trim().length > 40) {
-        res.status(400).send({ message: "Invalid title", field: "title" });
+        res.status(400).send({message: "Invalid title", field: "title"});
         return;
     }
 
     if (!author || !author.length || author.trim().length > 20) {
-        res.status(400).send({ message: "Invalid author", field: "author" });
+        res.status(400).send({message: "Invalid author", field: "author"});
         return;
     }
+    if (minAgeRestriction !== null && (typeof minAgeRestriction !== "number" || minAgeRestriction < 0)) {
+        res.status(400).send({message: "Invalid minAgeRestriction", field: "minAgeRestriction"});
+        return;
+    }
+    if (typeof canBeDownloaded !== "boolean") {
+        res.status(400).send({ message: "Invalid canBeDownloaded", field: "canBeDownloaded" });
+        return;
+    }
+    if (publicationDate !==publicationDate) {
+        res.status(400).send({ message: "Invalid publicationDate", field: "publicationDate" });
+        return;
+    }
+            if (Array.isArray(availableResolutions)) {
+                if (!availableResolutions.every((r) => Object.values(AvailableResolutions).includes(r))) {
+                    res.status(400).send({message: "Invalid availableResolutions", field: "availableResolutions"});
+                    return;
+                }
 
-    if (Array.isArray(availableResolutions)) {
-        if (!availableResolutions.every((r) => Object.values(AvailableResolutions).includes(r))) {
-            res.status(400).send({ message: "Invalid availableResolutions", field: "availableResolutions" });
-            return;
-        }
-        if (minAgeRestriction !== null && (typeof minAgeRestriction !== "number" || minAgeRestriction < 0)) {
-            res.status(400).send({ message: "Invalid minAgeRestriction", field: "minAgeRestriction" });
-            return;
-        }
-    } else {
-        res.status(400).send({ message: "Invalid availableResolutions", field: "availableResolutions" });
-        return;
-    }
+            } else {
+                res.status(400).send({message: "Invalid availableResolutions", field: "availableResolutions"});
+                return;
+            }
 
     video.title = title;
     video.author = author;
     video.availableResolutions = availableResolutions;
     video.minAgeRestriction = minAgeRestriction;
+    video.canBeDownloaded = canBeDownloaded;
+    video.publicationDate = publicationDate;
 
     res.sendStatus(204);
 });
@@ -130,14 +141,14 @@ app.delete("/videos/:id", (req: RequestWithParams<{ id: number }>, res: Response
     res.status(204).send(deletedVideo);
 });
 
-app.delete("/videos", (req: express.Request, res: express.Response) => {
+app.delete("/testing/all-data", (req: express.Request, res: express.Response) => {
     if (videos.length === 0) {
-        res.sendStatus(204);
+        res.status(204).send("No Videos");
         return;
     }
     videos.length = 0;
 
-    res.sendStatus(204);
+    res.status(204).send("All videos deleted!");
 });
 
 
